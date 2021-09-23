@@ -1,0 +1,7 @@
+port: ":8888"
+primary_db:
+  host: "172.19.0.2"
+  username: "root"
+  password: "a"
+  db_name: "CodeInterview"
+  port: "3306"
