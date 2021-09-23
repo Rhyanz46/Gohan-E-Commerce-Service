@@ -1,4 +1,5 @@
 port: ":8888"
+static_folder: "static/"
 primary_db:
   host: "172.19.0.2"
   username: "root"

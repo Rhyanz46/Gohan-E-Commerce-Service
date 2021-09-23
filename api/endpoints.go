@@ -5,17 +5,15 @@ var Endpoint = struct {
 	UserRegister string
 	UserDetail   string
 
-	Product                     string
-	ProductList                 string
-	ProductIdProduct            string
-	ProductIdProductUploadProof string
+	Product             string
+	ProductDetail       string
+	ProductDetailPhotos string
 }{
 	UserLogin:    "/user/login",
 	UserRegister: "/user/register",
 	UserDetail:   "/user/detail",
 
-	Product:                     "/product",
-	ProductList:                 "/product/list",
-	ProductIdProduct:            "/product/{id_product}",
-	ProductIdProductUploadProof: "/product/{id_product}/upload-proof",
+	Product:             "/product",
+	ProductDetail:       "/product/{product_id:[0-9]+}",
+	ProductDetailPhotos: "/product/{product_id:[0-9]+}/photos",
 }

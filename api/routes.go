@@ -17,8 +17,6 @@ func (server *Server) initializeRoutes() {
 	// product router
 	chatRoute := product.Routes(&product.Product{DB: server.DB})
 	route(Endpoint.Product, chatRoute.HandleProduct)
-	route(Endpoint.ProductList, chatRoute.HandleProductList)
-	route(Endpoint.ProductIdProduct, chatRoute.HandleUserDetail)
-	route(Endpoint.ProductIdProductUploadProof, chatRoute.HandleUserDetail)
-
+	route(Endpoint.ProductDetail, chatRoute.HandleProductDetail)
+	route(Endpoint.ProductDetailPhotos, chatRoute.HandleProductDetailPhotos)
 }

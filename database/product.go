@@ -10,8 +10,8 @@ type Product struct {
 	CreateTime  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"create_time"`
 	UpdateTime  time.Time `gorm:"autoUpdateTime" json:"update_time"`
 
-	ProductPhotos []ProductPhoto `gorm:"foreignKey:ProductId;references:Id"`
-	UserId        uint           `gorm:"foreignKey:Id;"`
+	ProductPhotos []ProductPhoto `gorm:"foreignKey:ProductId;references:Id" json:"-"`
+	UserId        uint           `gorm:"foreignKey:Id;" json:"-"`
 	//ProductPhotos []ProductPhoto `gorm:"foreignKey:Id"`
 }
 

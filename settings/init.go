@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"gopkg.in/yaml.v3"
+	"log"
 	"os"
 	"time"
 )
@@ -11,8 +12,9 @@ import (
 var DataSettings Settings
 
 type Settings struct {
-	Port string
-	DB   MySql `yaml:"primary_db"`
+	Port         string
+	StaticFolder string `yaml:"static_folder"`
+	DB           MySql  `yaml:"primary_db"`
 }
 
 var LoginExpirationDuration = time.Duration(1) * time.Hour
@@ -39,6 +41,12 @@ func init() {
 	// load config to config variable
 	configDecoded := yaml.NewDecoder(file)
 	err = configDecoded.Decode(&DataSettings)
+
+	_, err = os.Stat(DataSettings.StaticFolder)
+	if os.IsNotExist(err) {
+		log.Fatal(fmt.Sprintf("Folder %s does not exist.", DataSettings.StaticFolder))
+	}
+
 	if err != nil {
 		fmt.Println("File config is not valid")
 		os.Exit(0)
