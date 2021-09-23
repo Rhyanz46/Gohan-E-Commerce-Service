@@ -244,3 +244,26 @@ func (prodData *ProductData) UploadPhoto(DB *gorm.DB, file multipart.File, fileI
 	}
 	return http.StatusCreated, nil
 }
+
+func (prodData *ProductData) GetPhotos(DB *gorm.DB) ([]database.ProductPhoto, int, error) {
+	var result database.Product
+	var resultPhoto []database.ProductPhoto
+	err := DB.Model(database.Product{}).
+		Where(database.Product{UserId: prodData.UserID, Id: prodData.ID}).
+		First(&result).Error
+	if err != nil {
+		if strings.Contains(err.Error(), "record not found") {
+			err = errors.New(fmt.Sprintf("product dengan id '%d' tidak ada", prodData.ID))
+			return nil, http.StatusBadRequest, err
+		}
+		return nil, http.StatusInternalServerError, errors.New("somethings error on server")
+	}
+
+	err = DB.Model(database.ProductPhoto{}).
+		Where(database.ProductPhoto{ProductId: prodData.ID}).
+		Find(&resultPhoto).Error
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
+		return nil, http.StatusInternalServerError, errors.New("somethings error on server")
+	}
+	return resultPhoto, http.StatusOK, err
+}

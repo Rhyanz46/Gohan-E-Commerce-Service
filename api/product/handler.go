@@ -180,6 +180,20 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 			return
 		}
 		//fmt.Println(file, fileInfo, err)
+	} else if r.Method == http.MethodGet {
+		data := ProductData{
+			UserID: userData.Id,
+			ID:     uint(productId),
+		}
+		photos, status, err := data.GetPhotos(product.DB)
+		if err != nil {
+			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			return
+		}
+		utils.ResponseJson(w, status, utils.DataResponse{
+			Message: "success",
+			Data:    photos,
+		})
+		return
 	}
-
 }

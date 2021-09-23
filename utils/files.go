@@ -16,7 +16,6 @@ type FileInfo struct {
 }
 
 func SaveMultipartFile(file multipart.File, fileInfo *multipart.FileHeader, dest string, allowed []string) (FileInfo, int, error) {
-	fmt.Println("dest ", dest)
 	var fileExtension, fileLocation string
 	var err error
 	var result FileInfo
