@@ -14,12 +14,13 @@ var DataSettings Settings
 type Settings struct {
 	Port         string
 	StaticFolder string `yaml:"static_folder"`
+	SecretKey    string `yaml:"secret_key"`
 	DB           MySql  `yaml:"primary_db"`
 }
 
 var LoginExpirationDuration = time.Duration(1) * time.Hour
 var JwtSigningMethod = jwt.SigningMethodHS256
-var JwtSignatureKey = []byte("FO00XG0P0ndas1CrOkBos55JAYUDA44e4ateByVNEU@20200218Gara2BCA")
+var JwtSignatureKey = []byte("")
 
 func init() {
 
@@ -46,6 +47,8 @@ func init() {
 	if os.IsNotExist(err) {
 		log.Fatal(fmt.Sprintf("Folder %s does not exist.", DataSettings.StaticFolder))
 	}
+
+	JwtSignatureKey = []byte(DataSettings.SecretKey)
 
 	if err != nil {
 		fmt.Println("File config is not valid")

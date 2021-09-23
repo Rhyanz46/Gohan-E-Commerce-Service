@@ -1,5 +1,6 @@
 port: ":8888"
 static_folder: "static/"
+secret_key: "FO00XG0P0ndas1CrOkBos55JAYUDA44e4ateByVNEU@20200218Gara2BCA"
 primary_db:
   host: "172.19.0.2"
   username: "root"
