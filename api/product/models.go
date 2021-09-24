@@ -10,9 +10,7 @@ type ProductData struct {
 	EditData map[string]interface{}
 }
 
-type RegisterData struct {
-	Email    string `json:"email"`
-	FullName string `json:"fullname"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+type ProductPhotoData struct {
+	ID     uint
+	UserID uint
 }

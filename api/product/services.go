@@ -208,7 +208,7 @@ func (prodData *ProductData) Delete(DB *gorm.DB) (int, error) {
 	return http.StatusNoContent, nil
 }
 
-func (prodData *ProductData) UploadPhoto(DB *gorm.DB, file multipart.File, fileInfo *multipart.FileHeader) (int, error) {
+func (prodData *ProductPhotoData) UploadPhoto(DB *gorm.DB, file multipart.File, fileInfo *multipart.FileHeader) (int, error) {
 	var result database.Product
 	err := DB.Model(database.Product{}).
 		Where(database.Product{UserId: prodData.UserID, Id: prodData.ID}).

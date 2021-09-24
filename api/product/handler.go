@@ -170,7 +170,7 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 
 	if r.Method == http.MethodPost && strings.Contains(r.Header.Get("Content-Type"), "multipart/form-data") {
 		file, fileInfo, err := r.FormFile("photo")
-		data := ProductData{
+		data := ProductPhotoData{
 			UserID: userData.Id,
 			ID:     uint(productId),
 		}
