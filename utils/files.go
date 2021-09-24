@@ -22,8 +22,8 @@ func SaveMultipartFile(file multipart.File, fileInfo *multipart.FileHeader, dest
 	var notAllowed = true
 
 	// start check extension
-	splitContenttype := strings.Split(fileInfo.Filename, ".")
-	fileExtension = splitContenttype[len(splitContenttype)-1]
+	splitContentType := strings.Split(fileInfo.Filename, ".")
+	fileExtension = splitContentType[len(splitContentType)-1]
 	for _, s := range allowed {
 		if strings.ToLower(s) == fileExtension {
 			notAllowed = false
