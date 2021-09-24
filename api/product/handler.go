@@ -192,7 +192,7 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 
 		//fmt.Println(file, fileInfo, err)
 	} else if r.Method == http.MethodGet {
-		data := ProductData{
+		data := ProductPhotoData{
 			UserID: userData.Id,
 			ID:     uint(productId),
 		}

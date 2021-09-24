@@ -245,7 +245,7 @@ func (prodData *ProductPhotoData) UploadPhoto(DB *gorm.DB, file multipart.File, 
 	return http.StatusCreated, nil
 }
 
-func (prodData *ProductData) GetPhotos(DB *gorm.DB) ([]database.ProductPhoto, int, error) {
+func (prodData *ProductPhotoData) GetPhotos(DB *gorm.DB) ([]database.ProductPhoto, int, error) {
 	var result database.Product
 	var resultPhoto []database.ProductPhoto
 	err := DB.Model(database.Product{}).
