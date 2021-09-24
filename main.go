@@ -1,11 +1,11 @@
 package main
 
 import (
-	server2 "main/api"
+	serverApi "main/api"
 	"main/settings"
 )
 
-var server = server2.Server{}
+var server = serverApi.Server{}
 
 func main() {
 	server.Initialize()

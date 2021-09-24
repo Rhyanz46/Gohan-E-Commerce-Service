@@ -6,16 +6,18 @@ import (
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
+	"strconv"
 	"time"
 )
 
 var DataSettings Settings
 
 type Settings struct {
-	Port         string
-	StaticFolder string `yaml:"static_folder"`
-	SecretKey    string `yaml:"secret_key"`
-	DB           MySql  `yaml:"primary_db"`
+	Port           string
+	StaticFolder   string `yaml:"static_folder"`
+	SecretKey      string `yaml:"secret_key"`
+	JwtExpiredTime string `yaml:"jwt_expired_time"`
+	DB             MySql  `yaml:"primary_db"`
 }
 
 var LoginExpirationDuration = time.Duration(1) * time.Hour
@@ -46,6 +48,15 @@ func init() {
 	_, err = os.Stat(DataSettings.StaticFolder)
 	if os.IsNotExist(err) {
 		log.Fatal(fmt.Sprintf("Folder %s does not exist.", DataSettings.StaticFolder))
+	}
+
+	if DataSettings.JwtExpiredTime != "" {
+		expiredTime, err := strconv.Atoi(DataSettings.JwtExpiredTime)
+		if err != nil {
+			log.Fatal("error to load 'jwt_expired_time' config.")
+			return
+		}
+		LoginExpirationDuration = time.Duration(expiredTime) * time.Hour
 	}
 
 	JwtSignatureKey = []byte(DataSettings.SecretKey)

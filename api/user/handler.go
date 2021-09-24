@@ -40,7 +40,7 @@ func (user *User) HandleUserLogin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		utils.ResponseJson(w, status, utils.DataResponse{
-			Message: "success to fetch data",
+			Message: "success to login",
 			Data: map[string]interface{}{
 				"id":          result.Id,
 				"email":       result.Email,
