@@ -8,6 +8,7 @@
 
 
 # Endpoint-endpoint
+```textmate
 - User
   - /user/login _[POST]_
   - /user/register _[POST]_
@@ -17,7 +18,7 @@
   - /product/{product_id:[0-9]+} _[PUT, GET, DELETE]_
   - /product/{product_id:[0-9]+}/photos _[POST, GET]_
   - /product/{product_id:[0-9]+}/photos/{photo_id:[0-9]+} _[GET, DELETE]_
-
+```
 # Installasi
 ## Konfigurasi
 untuk menggunakan service ini, anda perlu membuat konfigurasi .yaml kurang lebih seperti ini
