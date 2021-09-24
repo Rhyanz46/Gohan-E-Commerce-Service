@@ -35,8 +35,8 @@ primary_db:
 ```
 Keterangan :
 - anda hanya perlu membuat database kemudian program otomatis akan membuat schema table.
-- `jwt_expired_time` hitungan dalam jam dan nilai default dari jwt adalah 1 jam, jadi jika anda tidak memasukkan value 
-kedalam field maka nilai default akan terpakai yaitu satu jam.
+- `jwt_expired_time` hitungan dalam jam dan nilai default adalah 1 yang berarti 1 jam, jadi jika anda tidak memasukkan value 
+kedalam field ini maka nilai default akan terpakai yaitu 1 jam.
 - value dari field `static_folder` harus di akhiri dengan `/`
 - value dari field `static_folder` harus ada
 
