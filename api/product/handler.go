@@ -23,7 +23,7 @@ func (product *Product) HandleProduct(w http.ResponseWriter, r *http.Request) {
 		var data ProductData
 		status, userData := utils.GetTokenData(utils.GetBearerToken(r))
 		if status != http.StatusOK {
-			utils.ResponseJson(w, status, utils.DataResponse{
+			utils.ResponseJson(w, status, utils.MessageResponse{
 				Message: "you cannot access endpoint",
 			})
 			return
@@ -31,28 +31,28 @@ func (product *Product) HandleProduct(w http.ResponseWriter, r *http.Request) {
 
 		status, err = data.Validation(r.Body, userData)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
 		status, err = data.DBValidation(product.DB)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
 		status, err = data.Insert(product.DB)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
-		utils.ResponseJson(w, status, utils.DataResponse{Message: "success"})
+		utils.ResponseJson(w, status, utils.MessageResponse{Message: "success"})
 		return
 	} else if r.Method == http.MethodGet {
 		meta := utils.MetaData{}
 		status, userData := utils.GetTokenData(utils.GetBearerToken(r))
 		if status != http.StatusOK {
-			utils.ResponseJson(w, status, utils.DataResponse{
+			utils.ResponseJson(w, status, utils.MessageResponse{
 				Message: "you cannot access endpoint",
 			})
 			return
@@ -61,7 +61,7 @@ func (product *Product) HandleProduct(w http.ResponseWriter, r *http.Request) {
 		data := ProductData{UserID: userData.Id}
 		result, status, err := data.GetMyProducts(product.DB, meta)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
@@ -79,7 +79,7 @@ func (product *Product) HandleProductDetail(w http.ResponseWriter, r *http.Reque
 	vars := mux.Vars(r)
 	productId, err := strconv.Atoi(vars["product_id"])
 	if err != nil {
-		utils.ResponseJson(w, http.StatusInternalServerError, utils.DataResponse{
+		utils.ResponseJson(w, http.StatusInternalServerError, utils.MessageResponse{
 			Message: "internal server error",
 		})
 		return
@@ -87,7 +87,7 @@ func (product *Product) HandleProductDetail(w http.ResponseWriter, r *http.Reque
 
 	status, userData := utils.GetTokenData(utils.GetBearerToken(r))
 	if status != http.StatusOK {
-		utils.ResponseJson(w, status, utils.DataResponse{
+		utils.ResponseJson(w, status, utils.MessageResponse{
 			Message: "you cannot access endpoint",
 		})
 		return
@@ -100,7 +100,7 @@ func (product *Product) HandleProductDetail(w http.ResponseWriter, r *http.Reque
 		}
 		result, status, err := data.GetMyProduct(product.DB)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
@@ -117,18 +117,18 @@ func (product *Product) HandleProductDetail(w http.ResponseWriter, r *http.Reque
 
 		status, err := data.PrepareUpdate(product.DB, r.Body)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
 		if data.EditData == nil {
-			utils.ResponseJson(w, http.StatusOK, utils.DataResponse{Message: "tidak ada data yang di edit"})
+			utils.ResponseJson(w, http.StatusOK, utils.MessageResponse{Message: "tidak ada data yang di edit"})
 			return
 		}
 
 		status, err = data.Update(product.DB)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 		w.WriteHeader(http.StatusNoContent)
@@ -141,7 +141,7 @@ func (product *Product) HandleProductDetail(w http.ResponseWriter, r *http.Reque
 
 		status, err := data.Delete(product.DB)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 		w.WriteHeader(http.StatusNoContent)
@@ -154,7 +154,7 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 	vars := mux.Vars(r)
 	productId, err := strconv.Atoi(vars["product_id"])
 	if err != nil {
-		utils.ResponseJson(w, http.StatusInternalServerError, utils.DataResponse{
+		utils.ResponseJson(w, http.StatusInternalServerError, utils.MessageResponse{
 			Message: "internal server error",
 		})
 		return
@@ -162,7 +162,7 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 
 	status, userData := utils.GetTokenData(utils.GetBearerToken(r))
 	if status != http.StatusOK {
-		utils.ResponseJson(w, status, utils.DataResponse{
+		utils.ResponseJson(w, status, utils.MessageResponse{
 			Message: "you cannot access endpoint",
 		})
 		return
@@ -176,9 +176,20 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 		}
 		status, err := data.UploadPhoto(product.DB, file, fileInfo)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
+
+		status, err = data.SaveToDB(product.DB)
+		if err != nil {
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
+			return
+		}
+		utils.ResponseJson(w, status, utils.MessageResponse{
+			Message: "success to upload!",
+		})
+		return
+
 		//fmt.Println(file, fileInfo, err)
 	} else if r.Method == http.MethodGet {
 		data := ProductData{
@@ -187,7 +198,7 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 		}
 		photos, status, err := data.GetPhotos(product.DB)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 		utils.ResponseJson(w, status, utils.DataResponse{

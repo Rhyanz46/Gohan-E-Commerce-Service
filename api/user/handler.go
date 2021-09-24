@@ -24,19 +24,19 @@ func (user *User) HandleUserLogin(w http.ResponseWriter, r *http.Request) {
 		data := LoginData{}
 		status, err = data.Validation(r.Body)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
 		result, status, err := data.GetAccount(user.DB)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
 		token, err := data.CreateToken()
 		if err != nil {
-			utils.ResponseJson(w, http.StatusInternalServerError, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, http.StatusInternalServerError, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 		utils.ResponseJson(w, status, utils.DataResponse{
@@ -64,23 +64,23 @@ func (user *User) HandleUserRegister(w http.ResponseWriter, r *http.Request) {
 		data := RegisterData{}
 		status, err = data.Validation(r.Body)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
 		// user data validate to database
 		status, err = data.DBValidation()
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
 		status, err = data.Create(user.DB)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{Message: err.Error()})
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
-		utils.ResponseJson(w, status, utils.DataResponse{Message: "your account is success created"})
+		utils.ResponseJson(w, status, utils.MessageResponse{Message: "your account is success created"})
 		return
 	}
 	w.WriteHeader(http.StatusMethodNotAllowed)
@@ -98,7 +98,7 @@ func (user *User) HandleUserDetail(w http.ResponseWriter, r *http.Request) {
 
 		userDetail, status, err := tokenData.GetUser(user.DB)
 		if err != nil {
-			utils.ResponseJson(w, status, utils.DataResponse{
+			utils.ResponseJson(w, status, utils.MessageResponse{
 				Message: err.Error(),
 			})
 			return

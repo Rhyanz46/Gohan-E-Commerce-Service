@@ -14,6 +14,10 @@ type MetaData struct {
 	PrevPage    int `json:"prev_page"`
 }
 
+type MessageResponse struct {
+	Message string `json:"message"`
+}
+
 type DataResponse struct {
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`

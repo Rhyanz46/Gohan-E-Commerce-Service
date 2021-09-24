@@ -267,3 +267,8 @@ func (prodData *ProductData) GetPhotos(DB *gorm.DB) ([]database.ProductPhoto, in
 	}
 	return resultPhoto, http.StatusOK, err
 }
+
+func (prodData *ProductPhotoData) SaveToDB(DB *gorm.DB) (int, error) {
+
+	return http.StatusCreated, nil
+}
