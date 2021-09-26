@@ -1,22 +1,37 @@
 package api
 
 import (
+	"main/api/account"
+	"main/api/chat"
 	"main/api/product"
-	"main/api/user"
+	"main/settings"
+	"net/http"
 )
 
 func (server *Server) initializeRoutes() {
 	route := server.Router.HandleFunc
 
-	// admin router
-	userRoute := user.Routes(&user.User{DB: server.DB})
-	route(Endpoint.UserLogin, userRoute.HandleUserLogin)
-	route(Endpoint.UserRegister, userRoute.HandleUserRegister)
-	route(Endpoint.UserDetail, userRoute.HandleUserDetail)
+	// account router
+	accountRoute := account.Routes(&account.Account{DB: server.DB})
+	route(AdminEndpoint.Login, accountRoute.HandlerLogin)
+	route(AdminEndpoint.Register, accountRoute.HandleRegister)
+	route(AdminEndpoint.Detail, accountRoute.HandleDetail)
 
 	// product router
-	chatRoute := product.Routes(&product.Product{DB: server.DB})
-	route(Endpoint.Product, chatRoute.HandleProduct)
-	route(Endpoint.ProductDetail, chatRoute.HandleProductDetail)
-	route(Endpoint.ProductDetailPhotos, chatRoute.HandleProductDetailPhotos)
+	productRoute := product.Routes(&product.Product{DB: server.DB})
+	route(AdminEndpoint.Product, productRoute.HandleProduct)
+	route(AdminEndpoint.ProductDetail, productRoute.HandleProductDetail)
+	route(AdminEndpoint.ProductDetailPhoto, productRoute.HandleProductDetailPhoto)
+	route(AdminEndpoint.ProductDetailPhotoDetail, productRoute.HandleProductDetailPhotoDetail)
+
+	// websocket router
+	chatRoute := chat.Routes(&chat.Chat{DB: server.DB})
+	go chatRoute.Socket().Run()
+	route(AdminEndpoint.Ws, chatRoute.HandleChat)
+
+	server.Router.PathPrefix(settings.ProductPhotosPrefixUrl).Handler(
+		http.StripPrefix(settings.ProductPhotosPrefixUrl,
+			http.FileServer(http.Dir("./"+settings.DataSettings.ProductPhotosFolder)),
+		),
+	)
 }

@@ -1,4 +1,4 @@
-package user
+package account
 
 import (
 	"gorm.io/gorm"
@@ -6,15 +6,15 @@ import (
 	"net/http"
 )
 
-type User struct {
+type Account struct {
 	DB *gorm.DB
 }
 
-func Routes(user *User) *User {
-	return user
+func Routes(account *Account) *Account {
+	return account
 }
 
-func (user *User) HandleUserLogin(w http.ResponseWriter, r *http.Request) {
+func (acc *Account) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var status int
 
@@ -28,7 +28,7 @@ func (user *User) HandleUserLogin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		result, status, err := data.GetAccount(user.DB)
+		result, status, err := data.GetAccount(acc.DB)
 		if err != nil {
 			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
@@ -55,12 +55,12 @@ func (user *User) HandleUserLogin(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusMethodNotAllowed)
 }
 
-func (user *User) HandleUserRegister(w http.ResponseWriter, r *http.Request) {
+func (acc *Account) HandleRegister(w http.ResponseWriter, r *http.Request) {
 	var err error
 	status := http.StatusCreated
 
 	if r.Method == "POST" {
-		// user data validation
+		// acc data validation
 		data := RegisterData{}
 		status, err = data.Validation(r.Body)
 		if err != nil {
@@ -68,14 +68,14 @@ func (user *User) HandleUserRegister(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// user data validate to database
+		// acc data validate to database
 		status, err = data.DBValidation()
 		if err != nil {
 			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
-		status, err = data.Create(user.DB)
+		status, err = data.Create(acc.DB)
 		if err != nil {
 			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
@@ -86,7 +86,7 @@ func (user *User) HandleUserRegister(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusMethodNotAllowed)
 }
 
-func (user *User) HandleUserDetail(w http.ResponseWriter, r *http.Request) {
+func (acc *Account) HandleDetail(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		status, tokenData := utils.GetTokenData(utils.GetBearerToken(r))
 		if status != http.StatusOK {
@@ -96,7 +96,7 @@ func (user *User) HandleUserDetail(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		userDetail, status, err := tokenData.GetUser(user.DB)
+		userDetail, status, err := tokenData.GetUser(acc.DB)
 		if err != nil {
 			utils.ResponseJson(w, status, utils.MessageResponse{
 				Message: err.Error(),

@@ -1,4 +1,4 @@
-package user
+package account
 
 import (
 	"encoding/json"
@@ -137,6 +137,9 @@ func (register *RegisterData) Create(DB *gorm.DB) (int, error) {
 	}).Error
 	if err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
+			if strings.Contains(err.Error(), "username") {
+				return http.StatusBadRequest, errors.New("this username is already registered")
+			}
 			return http.StatusBadRequest, errors.New("this email is already registered")
 		}
 		return http.StatusInternalServerError, errors.New("something error from server")

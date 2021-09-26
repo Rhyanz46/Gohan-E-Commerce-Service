@@ -7,37 +7,39 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
 var DataSettings Settings
 
 type Settings struct {
-	Port           string
-	StaticFolder   string `yaml:"static_folder"`
-	SecretKey      string `yaml:"secret_key"`
-	JwtExpiredTime string `yaml:"jwt_expired_time"`
-	DB             MySql  `yaml:"primary_db"`
+	Port                string
+	ProductPhotosFolder string `yaml:"product_photos_folder"`
+	SecretKey           string `yaml:"secret_key"`
+	JwtExpiredTime      string `yaml:"jwt_expired_time"`
+	DB                  MySql  `yaml:"primary_db"`
 }
 
 var LoginExpirationDuration = time.Duration(1) * time.Hour
 var JwtSigningMethod = jwt.SigningMethodHS256
 var JwtSignatureKey = []byte("")
+var StaticFolder = "static/"
+var ProductPhotosPrefixUrl = "/product-photos/"
 
 func init() {
 
 	// load file config
 	file, err := os.Open("./config.yaml")
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(0)
+		log.Fatal(err)
 	}
 
 	// close file config
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}(file)
 
@@ -45,16 +47,26 @@ func init() {
 	configDecoded := yaml.NewDecoder(file)
 	err = configDecoded.Decode(&DataSettings)
 
-	_, err = os.Stat(DataSettings.StaticFolder)
-	if os.IsNotExist(err) {
-		log.Fatal(fmt.Sprintf("Folder %s does not exist.", DataSettings.StaticFolder))
+	if DataSettings.ProductPhotosFolder != "" {
+		if !strings.Contains(DataSettings.ProductPhotosFolder, "/") {
+			DataSettings.ProductPhotosFolder = DataSettings.ProductPhotosFolder + "/"
+		}
+		DataSettings.ProductPhotosFolder = StaticFolder + DataSettings.ProductPhotosFolder
+		_, err = os.Stat(DataSettings.ProductPhotosFolder)
+		if os.IsNotExist(err) {
+			err = os.Mkdir(DataSettings.ProductPhotosFolder, 0755)
+			if err != nil {
+				log.Fatal(fmt.Sprintf("cannot create folder %s.", DataSettings.ProductPhotosFolder))
+			}
+		}
+	} else {
+		log.Fatal("you have to set `product_photos_folder` value in config.yaml ")
 	}
 
 	if DataSettings.JwtExpiredTime != "" {
 		expiredTime, err := strconv.Atoi(DataSettings.JwtExpiredTime)
 		if err != nil {
 			log.Fatal("error to load 'jwt_expired_time' config.")
-			return
 		}
 		LoginExpirationDuration = time.Duration(expiredTime) * time.Hour
 	}
@@ -62,7 +74,6 @@ func init() {
 	JwtSignatureKey = []byte(DataSettings.SecretKey)
 
 	if err != nil {
-		fmt.Println("File config is not valid")
-		os.Exit(0)
+		log.Fatal("File config is not valid")
 	}
 }

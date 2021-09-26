@@ -17,7 +17,7 @@ type Product struct {
 
 type ProductPhoto struct {
 	Id         uint      `gorm:"primaryKey;" json:"id"`
-	Address    string    `gorm:"size:500;" json:"address"`
+	Filename   string    `gorm:"size:500;" json:"filename"`
 	CreateTime time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"create_time"`
 	UpdateTime time.Time `gorm:"autoUpdateTime" json:"update_time"`
 

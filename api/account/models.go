@@ -1,4 +1,4 @@
-package user
+package account
 
 type LoginData struct {
 	Id       uint

@@ -11,6 +11,7 @@ import (
 )
 
 type FileInfo struct {
+	Name      string
 	Location  string
 	Extension string
 }

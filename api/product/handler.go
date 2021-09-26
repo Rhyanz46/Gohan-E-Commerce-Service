@@ -150,7 +150,7 @@ func (product *Product) HandleProductDetail(w http.ResponseWriter, r *http.Reque
 	w.WriteHeader(http.StatusMethodNotAllowed)
 }
 
-func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http.Request) {
+func (product *Product) HandleProductDetailPhoto(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	productId, err := strconv.Atoi(vars["product_id"])
 	if err != nil {
@@ -171,16 +171,17 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 	if r.Method == http.MethodPost && strings.Contains(r.Header.Get("Content-Type"), "multipart/form-data") {
 		file, fileInfo, err := r.FormFile("photo")
 		data := ProductPhotoData{
-			UserID: userData.Id,
-			ID:     uint(productId),
+			UserID:    userData.Id,
+			ProductID: uint(productId),
 		}
-		status, err := data.UploadPhoto(product.DB, file, fileInfo)
+
+		photoDetail, status, err := data.UploadPhoto(product.DB, file, fileInfo)
 		if err != nil {
 			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
 		}
 
-		status, err = data.SaveToDB(product.DB)
+		status, err = data.SaveToDB(product.DB, photoDetail)
 		if err != nil {
 			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
 			return
@@ -189,12 +190,10 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 			Message: "success to upload!",
 		})
 		return
-
-		//fmt.Println(file, fileInfo, err)
 	} else if r.Method == http.MethodGet {
 		data := ProductPhotoData{
-			UserID: userData.Id,
-			ID:     uint(productId),
+			UserID:    userData.Id,
+			ProductID: uint(productId),
 		}
 		photos, status, err := data.GetPhotos(product.DB)
 		if err != nil {
@@ -207,4 +206,42 @@ func (product *Product) HandleProductDetailPhotos(w http.ResponseWriter, r *http
 		})
 		return
 	}
+}
+
+func (product *Product) HandleProductDetailPhotoDetail(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	productId, err := strconv.Atoi(vars["product_id"])
+	photoId, err := strconv.Atoi(vars["photo_id"])
+	if err != nil {
+		utils.ResponseJson(w, http.StatusInternalServerError, utils.MessageResponse{
+			Message: "internal server error",
+		})
+		return
+	}
+
+	status, userData := utils.GetTokenData(utils.GetBearerToken(r))
+	if status != http.StatusOK {
+		utils.ResponseJson(w, status, utils.MessageResponse{
+			Message: "you cannot access endpoint",
+		})
+		return
+	}
+
+	if r.Method == http.MethodDelete {
+		data := ProductPhotoData{
+			UserID:    userData.Id,
+			ProductID: uint(productId),
+			PhotoID:   uint(photoId),
+		}
+		status, err := data.Delete(product.DB)
+		if err != nil {
+			utils.ResponseJson(w, status, utils.MessageResponse{Message: err.Error()})
+			return
+		}
+		utils.ResponseJson(w, status, utils.MessageResponse{
+			Message: "deleted!",
+		})
+		return
+	}
+	w.WriteHeader(http.StatusMethodNotAllowed)
 }

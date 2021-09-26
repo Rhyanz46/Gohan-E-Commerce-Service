@@ -1,19 +1,25 @@
 package api
 
-var Endpoint = struct {
-	UserLogin    string
-	UserRegister string
-	UserDetail   string
+var AdminEndpoint = struct {
+	Login    string
+	Register string
+	Detail   string
 
-	Product             string
-	ProductDetail       string
-	ProductDetailPhotos string
+	Product                  string
+	ProductDetail            string
+	ProductDetailPhoto       string
+	ProductDetailPhotoDetail string
+
+	Ws string
 }{
-	UserLogin:    "/user/login",
-	UserRegister: "/user/register",
-	UserDetail:   "/user/detail",
+	Login:    "/admin/login",
+	Register: "/admin/register",
+	Detail:   "/admin/detail",
 
-	Product:             "/product",
-	ProductDetail:       "/product/{product_id:[0-9]+}",
-	ProductDetailPhotos: "/product/{product_id:[0-9]+}/photos",
+	Product:                  "/admin/product",
+	ProductDetail:            "/admin/product/{product_id:[0-9]+}",
+	ProductDetailPhoto:       "/admin/product/{product_id:[0-9]+}/photo",
+	ProductDetailPhotoDetail: "/admin/product/{product_id:[0-9]+}/photo/{photo_id:[0-9]+}",
+
+	Ws: "/admin/ws",
 }

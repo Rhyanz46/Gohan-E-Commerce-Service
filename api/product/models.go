@@ -1,5 +1,7 @@
 package product
 
+import "time"
+
 type ProductData struct {
 	ID          uint
 	UserID      uint
@@ -11,6 +13,14 @@ type ProductData struct {
 }
 
 type ProductPhotoData struct {
-	ID     uint
-	UserID uint
+	ProductID uint
+	UserID    uint
+	PhotoID   uint
+}
+
+type ProductPhotoResponse struct {
+	Id         uint      `json:"id"`
+	Address    string    `json:"address"`
+	CreateTime time.Time `json:"create_time"`
+	UpdateTime time.Time `json:"update_time"`
 }
