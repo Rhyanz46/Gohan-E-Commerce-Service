@@ -1,3 +1,5 @@
+will release soon :)
+
 # Fitur Aplikasi 
 - Tambah produk
 - Lihat produk
